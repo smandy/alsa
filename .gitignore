@@ -2,3 +2,7 @@
 *~
 /.sconsign.dblite
 /alsa
+/amidi
+/my_midi
+/rawmidi
+*.o
