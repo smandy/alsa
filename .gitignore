@@ -6,3 +6,6 @@
 /my_midi
 /rawmidi
 *.o
+/alsaread
+/nonblocking
+/tut
