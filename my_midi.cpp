@@ -140,21 +140,21 @@ int main(int argc, char *argv[]) {
   int read = 0;
   int npfds;
   struct pollfd *pfds;
-
+  
   npfds = 1 + snd_rawmidi_poll_descriptors_count(ports[0].input);
   pfds = (pollfd *)alloca(npfds * sizeof(struct pollfd));
   pfds[0].fd = -1;
 
   std::cout << "npfds is " << std::endl;
   snd_rawmidi_poll_descriptors(ports[0].input, &pfds[1], npfds - 1);
-
+  
   // signal(SIGINT, sig_handler);
 
   std::cout << "Main loop" << std::endl;
 
   for (;;) {
     // std::cout << "Poll" << std::endl;
-    unsigned char buf[256];
+    uint8_t  buf[256];
     int i, length;
     unsigned short revents;
 
@@ -195,7 +195,6 @@ int main(int argc, char *argv[]) {
     if (length == 0)
       continue;
     read += length;
-
     for (i = 0; i < length; ++i) {
       std::cout << std::hex << buf[i] << " ";
       // print_byte(buf[i]);
