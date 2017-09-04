@@ -78,7 +78,7 @@ static void list_device(snd_ctl_t *ctl, int card, int device) {
         printf(" (%d subdevices)", subs);
       putchar('\n');
       break;
-    } else {
+    } else { 
       printf("%c%c  hw:%d,%d,%d  %s\n", sub < subs_in ? 'I' : ' ',
              sub < subs_out ? 'O' : ' ', card, device, sub, sub_name);
     }
@@ -87,8 +87,8 @@ static void list_device(snd_ctl_t *ctl, int card, int device) {
 
 struct my_chan {
   std::string port;
-  snd_rawmidi_t *input;
-  snd_rawmidi_t **inputp;
+  snd_rawmidi_t*  input;
+  snd_rawmidi_t** inputp;
 
 public:
   my_chan(const std::string s) : port(s) {
@@ -120,18 +120,19 @@ int main(int argc, char *argv[]) {
   // snd_rawmidi_t *nput, **inputp;
   // snd_rawmidi_t *output, **outputp;
 
-  std::vector<my_chan> ports = { {"hw:1,0,0"} }; //, {"hw:1,0,1"}, {"hw:1,0,2"} };
+  std::vector<my_chan> ports = { {"hw:1,0,2"}, { "hw:1,0,1"}, {"hw:1,0,0"} };
   //  std::cout << "Input is " << input << std::endl;
 
   for ( auto& chan : ports) {
     std::cout << "port is " << chan.port << std::endl;
     std::cout << "input is " << chan.input << " ptr=" << chan.inputp << std::endl;
-    if ((err = snd_rawmidi_open(chan.inputp, nullptr, chan.port.c_str(), SND_RAWMIDI_NONBLOCK)) <
+    if ((err = snd_rawmidi_open(&chan.input, nullptr, chan.port.c_str(), SND_RAWMIDI_NONBLOCK)) <
         0) {
       error("cannot open port \"%s\": %s", chan.port.c_str(), snd_strerror(err));
     }
+    std::cout << "err=" << err << std::endl;
     std::cout << "input is " << chan.input << " ptr=" << chan.inputp << std::endl;
-    snd_rawmidi_read(chan.input, NULL, 0); /* trigger reading */
+    snd_rawmidi_read(chan.input, nullptr, 0); /* trigger reading */
   }
   //std::cout << "Input is " << input << std::endl;
 
@@ -145,7 +146,6 @@ int main(int argc, char *argv[]) {
   pfds[0].fd = -1;
 
   std::cout << "npfds is " << std::endl;
-
   snd_rawmidi_poll_descriptors(ports[0].input, &pfds[1], npfds - 1);
 
   // signal(SIGINT, sig_handler);
