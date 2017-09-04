@@ -89,6 +89,7 @@ struct my_chan {
   std::string port;
   snd_rawmidi_t*  input;
   snd_rawmidi_t** inputp;
+  size_t size;
 
 public:
   my_chan(const std::string s) : port(s) {
@@ -140,13 +141,25 @@ int main(int argc, char *argv[]) {
   int read = 0;
   int npfds;
   struct pollfd *pfds;
+
   
-  npfds = 1 + snd_rawmidi_poll_descriptors_count(ports[0].input);
+  npfds = 1;
+
+
+  for( auto &p : ports) {
+    p.size = snd_rawmidi_poll_descriptors_count(p.input);
+    npfds += p.size;
+  }
+
   pfds = (pollfd *)alloca(npfds * sizeof(struct pollfd));
   pfds[0].fd = -1;
 
+  for(auto &p : ports) {
+    int idx= 0;
+    snd_rawmidi_poll_descriptors(p.input, &pfds[idx], npfds - 1);
+    idx += p.size;
+  }
   std::cout << "npfds is " << std::endl;
-  snd_rawmidi_poll_descriptors(ports[0].input, &pfds[1], npfds - 1);
   
   // signal(SIGINT, sig_handler);
 
@@ -167,7 +180,7 @@ int main(int argc, char *argv[]) {
     err = snd_rawmidi_poll_descriptors_revents(ports[0].input, &pfds[1], npfds - 1,
                                                &revents);
     if (err < 0) {
-      error("cannot get poll events: %s", snd_strerror(errno));
+      error("cannot get poll events: %s", snd_strerror(err));
       break;
     }
     if (revents & (POLLERR | POLLHUP))
