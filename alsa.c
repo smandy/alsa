@@ -1,7 +1,7 @@
 #include <alsa/asoundlib.h>
 #include <alsa/pcm.h>
 #include <math.h>
-#define BUFFER_LEN 48000
+#define BUFFER_LEN 480000
 
 static char *device = "default";                       //soundcard
 snd_output_t *output = NULL;
@@ -22,7 +22,6 @@ int main(void)
   snd_pcm_sframes_t frames;
 
   // ERROR HANDLING
-
   if ((err = snd_pcm_open(&handle, device, SND_PCM_STREAM_PLAYBACK, 0)) < 0) {
     printf("Playback open error: %s\n", snd_strerror(err));
     exit(EXIT_FAILURE);
@@ -41,19 +40,18 @@ int main(void)
 
   // SINE WAVE
   int freq = 0;
-  for ( freq = 220; freq < 20000; freq *= 2 ) {
+  for ( freq = 1000; freq < 20000; freq *= 2 ) {
     printf("Sine tone at %dHz\n ",freq);
 
     for (k=0; k<BUFFER_LEN; k++){
-      buffer[k] = ( sin(2*M_PI * (freq - (k / 200.0)) / fs * k));                 //sine wave value generation                        
+        buffer[k] = ( sin(2*M_PI * k * freq));                 //sine wave value generation                        
     }       
     
     for (j=0; j<5; j++){
       frames = snd_pcm_writei(handle, buffer, BUFFER_LEN);    //sending values to sound driver
     }
-  };
+  }
 
   snd_pcm_close(handle);
   return 0;
-
 }
