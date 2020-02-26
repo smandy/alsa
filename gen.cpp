@@ -19,7 +19,6 @@ void init_sdl (void) {
         exit (-1);
     atexit (SDL_Quit);
 }
-
 double Hz = 6000;
 
 //Creates the sine wave. To supress ripple, the wave runs continuously by using an incemental counter
@@ -38,7 +37,7 @@ void Callback (void *userdata, uint8_t *stream, int len) {
         counter++;
         angle += F;
         s2[z] = (uint8_t) A*sin(angle);
-        if (counter % 8192 == 0) {
+        if (counter % 16284 == 0) {
             std::cout << counter << " hz=" << Hz << " len=" << len << std::endl;
         };
     }
@@ -69,7 +68,7 @@ int main(int argc, char *argv[])
 {
     std::cout << "STartup" << std::endl;
     init_sdl ();
-    play ();
+    play();
     std::cout << "delay" << std::endl;
     SDL_Delay (20000);
     std::cout << "return" << std::endl;
