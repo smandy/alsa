@@ -21,18 +21,18 @@ void Callback(void *userdata, uint8_t *stream, int len) {
   double pi = 3.1415;
   // uint8_t *waveptr;
   // double Hz=220;
-  Hz *= 0.96;
+  Hz *= 0.99;
   if (Hz < 400)
     Hz = 6000;
   // double L = 1024;
-  double A = 65000;
+  double A = 20000;
   double SR = 44100;
   double F = 2 * pi * Hz / SR;
   int16_t *s2 = (int16_t *)stream;
   for (int z = 0; z < (len / 2); z++) {
     counter++;
     angle += F;
-    s2[z] = (uint8_t)A * sin(angle);
+    s2[z] = (uint16_t) A * sin(angle);
     if (counter % 16284 == 0) {
       std::cout << counter << " hz=" << Hz << " len=" << len << std::endl;
     };
