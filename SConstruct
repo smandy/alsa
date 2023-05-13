@@ -1,10 +1,11 @@
-env = Environment(CPPFLAGS = ['-g'],
+env = Environment(CPPFLAGS = ['-g','-std=c++23'],
                   LIBS = ['asound', 'm',
                           'SDL2main',
                           'SDL2',
                           'SDL2_mixer'])
 
 env.Program('alsa.c')
+#env.Program('main.cpp')
 #env.Program('amidi.cpp')
 env.Program('my_midi.cpp')
 env.Program('rawmidi.c')

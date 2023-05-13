@@ -18,7 +18,9 @@ void init_sdl(void) {
 
 const float m1 = 0.90;
 float mult = m1;
-;
+
+const double NOISE_AMPL = 5000;
+const int SR = 44100;
 
 void callback(void *userdata, uint8_t *stream, int len) {
   double pi = 3.1415;
@@ -28,14 +30,14 @@ void callback(void *userdata, uint8_t *stream, int len) {
   else if (Hz > 6000)
     mult = m1;
 
-  double A = INT16_MAX;
-  double SR = 44100;
+  double A = INT16_MAX - NOISE_AMPL;
+  //double SR = 44100;
   double F = 2 * pi * Hz / SR;
   auto s2 = reinterpret_cast<int16_t *>(stream);
   for (int z = 0; z < (len / 2); z++) {
     counter++;
     angle += F;
-    s2[z] = (int16_t)(A * sin(angle));
+    s2[z] = (int16_t)(A * sin(angle)) + NOISE_AMPL * static_cast<float>(rand()) / RAND_MAX;
     if ((counter & ((1 << 14) - 1)) == 0) {
       std::cout << counter << " hz=" << Hz << " len=" << len << std::endl;
     }
@@ -44,7 +46,7 @@ void callback(void *userdata, uint8_t *stream, int len) {
 
 void play(void) {
   SDL_AudioSpec spec;
-  spec.freq = 44100;
+  spec.freq = SR;
   spec.format = AUDIO_S16SYS;
   spec.channels = 1;
   spec.silence = 0;
